@@ -1,0 +1,8 @@
+/*********************************************
+ * OPL 20.1.0.0 Data
+ * Author: Joel
+ * Creation Date: Oct 12, 2021 at 10:16:17 PM
+ *********************************************/
+SheetConnection data("C:\\Users\\Joel\\Desktop\\Deterministic Operations Research\\Project\\Data Set - Steelco.xlsx");
+
+demand from SheetRead(data, "demand");
