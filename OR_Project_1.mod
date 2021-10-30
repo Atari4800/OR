@@ -1,6 +1,6 @@
 /*********************************************
  * OPL 20.1.0.0 Model
- * Author: Joel
+ * Author: Joel and Nick
  * Creation Date: Oct 9, 2021 at 2:21:20 PM
  *********************************************/
 //Ranges
@@ -17,7 +17,7 @@ float price_per_ton_new = 600;
 float new_steel_purchase_limit = 5000;
 float rec_steel_purchase_limit = 6000;
 float hold_over_cost = 40;
-float usuable_rec_steel = 0.8;
+float usable_rec_steel = 0.8;
 
 //Decision Variables
 dvar float+ rec_steel_purchased[beam][month]; //x
@@ -36,12 +36,12 @@ maximize sum(i in beam)(sum(j in month)(beam_selling_price[i]*(beams_made[i][j] 
 //Constraints
 subject to {
   Relation:
-    forall(i in beam)forall(j in month)beams_made[i][j] == new_steel_purchased[i][j] + usuable_rec_steel*rec_steel_purchased[i][j];
+    forall(i in beam)forall(j in month)beams_made[i][j] == new_steel_purchased[i][j] + usable_rec_steel*rec_steel_purchased[i][j];
   Purchase_Limit:
     forall(i in beam)forall(j in month)new_steel_purchased[i][j] <= new_steel_purchase_limit;
     forall(i in beam)forall(j in month)rec_steel_purchased[i][j] <= rec_steel_purchase_limit;
   Min_Percent_New_Steel:
-    forall(i in beam)forall(j in month)new_steel_purchased[i][j] >= min_percent_needed[i]*(usuable_rec_steel*rec_steel_purchased[i][j] + new_steel_purchased[i][j]);
+    forall(i in beam)forall(j in month)new_steel_purchased[i][j] >= min_percent_needed[i]*(usable_rec_steel*rec_steel_purchased[i][j] + new_steel_purchased[i][j]);
   Initial_Inventory:
     forall(i in beam)beams_made[i][1] + backorder[i][1] == demand[i][1] + inventory[i][1];
   Inventory:

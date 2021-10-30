@@ -1,0 +1,12 @@
+!SESSION 2021-10-30 11:04:19.184 -----------------------------------------------
+eclipse.buildId=Build R0
+java.fullversion=8.0.5.41 - pwa6480sr5fp41-20190919_01(SR5 FP41)
+JRE 1.8.0 Windows 8 amd64-64-Bit Compressed References 20190911_427071 (JIT enabled, AOT enabled)
+OpenJ9   - d581d49
+OMR      - ca4db84
+IBM      - 5cfdf9c
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -clean
+
+!ENTRY ilog.odms.ide.opllang 1 0 2021-10-30 12:42:53.973
+!MESSAGE concert_wrap.IloEndMT
