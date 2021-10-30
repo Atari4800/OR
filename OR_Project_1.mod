@@ -1,6 +1,6 @@
 /*********************************************
  * OPL 20.1.0.0 Model
- * Author: Joel
+ * Author: Joel and Nick
  * Creation Date: Oct 9, 2021 at 2:21:20 PM
  *********************************************/
 //Ranges
@@ -41,7 +41,7 @@ subject to {
     forall(i in month)new_steel_purchased[i] <= new_steel_purchase_limit;
     forall(i in month)rec_steel_purchased[i] <= rec_steel_purchase_limit;
   Min_Percent_new_steel:
-    forall(i in beam)forall(j in month)new_steel_purchased[j] - min_percent_needed[i]*new_steel_purchased[j] >= min_percent_needed[i]*usuable_rec*rec_steel_purchased[j];
+    forall(i in beam)forall(j in month)new_steel_purchased[j] >= min_percent_needed[i]*(usuable_rec*rec_steel_purchased[j] + new_steel_purchased[j]);
   Initial_Inventory:
     forall(i in beam)inventory[i][1] + demand[i][1] - not_filled[i][1] == beams_made[i][1];
   Inventory:
