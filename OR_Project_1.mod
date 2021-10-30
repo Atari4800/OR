@@ -6,46 +6,46 @@
 //Ranges
 range month = 1..12;
 range beam = 1..5;
-range steel = 1..2;
 
 //Parameter
 float beam_selling_price[beam] = [1000,750,1500,1200,800];
-float demand[month][beam] = ...;
+float demand[beam][month] = ...;
 float penalty[beam] = [100,300,250,600,1000];
 float min_percent_needed[beam] = [0.4,0.2,0.6,0.1,0.25];
-float price_per_ton[steel] = [400,600];
-float steel_purchase_limit[steel] = [5000,6000];
-//float money[month];
+float price_per_ton_rec = 400;
+float price_per_ton_new = 600;
+float new_steel_purchase_limit = 5000;
+float rec_steel_purchase_limit = 6000;
+float hold_over_cost = 40;
+float usuable_rec = 0.8;
 
 //Decision Variables
-dvar float+ steel_purchased[month][steel];
-dvar float+ inventory[month][beam];
-dvar float+ beams_made[month][steel][beam];
-dvar float+ not_filled[month][beam];
-dvar float+ percent_new_steel[month][beam];
+dvar float+ rec_steel_purchased[month];
+dvar float+ new_steel_purchased[month];
+dvar float+ inventory[beam][month];
+dvar float+ beams_made[beam][month];
+dvar float+ not_filled[beam][month];
+dvar float+ percent_new_steel[beam][month];
 
 //Objective Function
-maximize sum(i in month)(sum(j in beam)(beam_selling_price[j]*(demand[i][j] - not_filled[i][j])))
-            - sum(i in month)(sum(j in beam)(sum(k in steel)(price_per_ton[k]*beams_made[i][j][k])))
-            - sum(i in month)(sum(j in beam)(40*inventory[i][j]))
-            - sum(i in month)(sum(j in beam)(not_filled[i][j]*penalty[j]));
+maximize sum(i in beam)(sum(j in month)(beam_selling_price[i]*beams_made[i][j]))
+            - sum(j in month)new_steel_purchased[j]*price_per_ton_new
+            - sum(j in month)rec_steel_purchased[j]*price_per_ton_rec
+            - sum(i in beam)(sum(j in month)(penalty[i]*not_filled[i][j]))
+            - sum(i in beam)(sum(j in month)(inventory[i][j]*hold_over_cost))
+            ;
             
 //Constraints
 subject to {
   Purchase_Limit:
-    forall(i in month)forall(j in steel)steel_purchased[i][j] <= steel_purchase_limit[j];
-  Iventory_Balance:
-    forall(i in month: i > 1)forall(j in beam)forall(k in steel)inventory[i-1][j] + beams_made[i-1][k][j] == inventory[i][j] + demand[i][j] - not_filled[i][j];
-  Initial_inventory:
-    forall(j in beam)forall(k in steel)beams_made[1][k][j] == inventory[1][j] + demand[1][j] - not_filled[1][j];
+    forall(i in month)new_steel_purchased[i] <= new_steel_purchase_limit;
+    forall(i in month)rec_steel_purchased[i] <= rec_steel_purchase_limit;
   Min_Percent_new_steel:
-    forall(i in month)forall(j in beam)steel_purchased[i][1]*percent_new_steel[i][j] + steel_purchased[i][2]*(1-percent_new_steel[i][j]) == 1000000000; // we dont know...
-    forall(i in month)forall(j in beam)percent_new_steel[i][j] >= min_percent_needed[j];
-  //Trash_Steel:
-    //forall(i in month)usable_steel_purchased[i][1] == 0.8*steel_purchased[i][1]; // we dont know...
-}
-
-//PostProcessing
-execute {
-   
+    forall(i in beam)forall(j in month)new_steel_purchased[j] - min_percent_needed[i]*new_steel_purchased[j] >= min_percent_needed[i]*usuable_rec*rec_steel_purchased[j];
+  Initial_Inventory:
+    forall(i in beam)inventory[i][1] + demand[i][1] - not_filled[i][1] == beams_made[i][1];
+  Inventory:
+    forall(i in beam)forall(j in month: j > 1)inventory[i][j] + demand[i][j] - not_filled[i][j] == inventory[i][j - 1] + beams_made[i][j - 1];
+  Demand:
+    forall(i in beam)forall(j in month)beams_made[i][j] >= demand[i][j] + not_filled[i][j];
 }
