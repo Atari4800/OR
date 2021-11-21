@@ -1,0 +1,11 @@
+/*********************************************
+ * OPL 20.1.0.0 Data
+ * Author: Joel
+ * Creation Date: Nov 20, 2021 at 10:37:52 AM
+ *********************************************/
+SheetConnection data("C:\\Users\\Joel\\Desktop\\Deterministic Operations Research\\Project 2\\Data Set - ToyCo(1).xlsx");
+
+demand from SheetRead(data, "Demand");
+fixed_cost from SheetRead(data, "Fixed_Cost");
+capacity from SheetRead(data, "Capacity");
+initial_employees from SheetRead(data, "Employees");
