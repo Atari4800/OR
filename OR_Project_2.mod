@@ -51,10 +51,10 @@ subject to {
   Severance:
   //ask about how to make truth table properly for severance
   Only_pay_severance_if_needed:
-    //forall(i in week: i > 1)forall(j in factory) severance[i][j] <= 10000000000*pay_sev[i][j];
-    //forall(i in week: i > 1)forall(j in factory) severance[i][j] <= 10000000000*(1 - pay_sev[i][j]);
+    forall(i in week: i > 1)forall(j in factory) -severance[i][j] <= 10000000000*pay_sev[i][j]; // eliminates neg 0 bad case
+    forall(i in week: i > 1)forall(j in factory) severance[i][j] <= 10000000000*(1 - pay_sev[i][j]); //eliminates pos 1 bad case
       
-    //forall(i in week: i > 1)forall(j in factory) trainer[i][j] + non_trainer[i][j] - trainer[i-1][j] - non_trainer[i-1][j] == severance[i][j];
+    forall(i in week: i > 1)forall(j in factory) trainer[i][j] + non_trainer[i][j] - trainer[i-1][j] - non_trainer[i-1][j] == severance[i][j];
   Initial_severance:
     //forall(j in factory)severance[1][j] == 0;
   Capacity:
