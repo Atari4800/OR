@@ -1,6 +1,6 @@
 /*********************************************
  * OPL 20.1.0.0 Model
- * Author: Joel
+ * Author: Joel and Nick
  * Creation Date: Nov 20, 2021 at 10:37:52 AM
  *********************************************/
 //range
@@ -36,30 +36,19 @@ subject to {
     forall(i in week)sum(j in factory)(40*non_trainer[i][j] + 20*trainer[i][j] + overtime[i][j]) >= demand[i];
   Overtime_limit:
   //should factory be forall or sum?
-    forall(i in week)forall(j in factory)((non_trainer[i][j] + trainer[i][j])*50 - overtime[i][j]) >= 0;
-  Total_Hours_limit:
-    //forall(i in week)forall(j in factory)(non_trainer[i][j] + trainer[i][j]) <= ;
+    forall(i in week)forall(j in factory)((non_trainer[i][j] + trainer[i][j])*10 - overtime[i][j]) >= 0;
   Trainer_limit:
   //any better way to make sure each new hire has a trainer?
     forall(i in week)forall(j in factory)new_hire[i][j] == trainer[i][j];
   Training_time:
   //problems ahoy
-    forall(i in week: i > 1)forall(j in factory) new_hire[i-1][j] + trainer[i-1][j] + non_trainer[i-1][j] == trainer[i][j] + non_trainer[i][j];
+    forall(i in week: i > 1)forall(j in factory) new_hire[i-1][j] + trainer[i-1][j] + non_trainer[i-1][j] == trainer[i][j] + non_trainer[i][j] + severance[i][j];
   Initial_split:
   //not splitting it properly
-    forall(j in factory)non_trainer[1][j] + trainer[1][j] == initial_employees[j];
-  Severance:
-  //ask about how to make truth table properly for severance
-  Only_pay_severance_if_needed:
-    forall(i in week: i > 1)forall(j in factory) -severance[i][j] <= 10000000000*pay_sev[i][j]; // eliminates neg 0 bad case
-    forall(i in week: i > 1)forall(j in factory) severance[i][j] <= 10000000000*(1 - pay_sev[i][j]); //eliminates pos 1 bad case
-      
-    forall(i in week: i > 1)forall(j in factory) trainer[i][j] + non_trainer[i][j] - trainer[i-1][j] - non_trainer[i-1][j] == severance[i][j];
-  Initial_severance:
-    //forall(j in factory)severance[1][j] == 0;
+    forall(j in factory)non_trainer[1][j] + trainer[1][j] + severance[1][j] == initial_employees[j];
   Capacity:
   //do we need open[j] any place else?
-    forall(i in week)forall(j in factory)40*non_trainer[i][j] + 20*trainer[i][j] <= open[j]*capacity[j];
+    forall(i in week)forall(j in factory)40*non_trainer[i][j] + 20*trainer[i][j] + overtime[i][j] <= open[j]*capacity[j];
   If_NJ_then_Oregon:
     open[2] <= open[1];
   NJ_and_or_NY:
